@@ -1,0 +1,156 @@
+{
+  "name": "EliStore",
+  "identifier": "com.sebastjanbrajer.elistore",
+  "apiVersion": "v2",
+  "sourceURL": "https://sebastjanb.github.io/elistore-releases/apps.json",
+  "subtitle": "Apps that never made it to the App Store.",
+  "description": "EliStore is a private source for AltStore and SideStore. It hosts apps built for hardware Apple never cared about and services that lost their official client — installed straight onto the phone, no App Store review in the way.",
+  "iconURL": "https://sebastjanb.github.io/elistore-releases/assets/elistore-icon.png",
+  "headerURL": "https://sebastjanb.github.io/elistore-releases/assets/elistore-header.png",
+  "website": "https://sebastjanb.github.io/elistore-releases",
+  "tintColor": "#6E5AF6",
+  "featuredApps": [
+    "com.sebastjanbrajer.stormdrive",
+    "com.dsget.app"
+  ],
+  "apps": [
+    {
+      "name": "DS get",
+      "bundleIdentifier": "com.dsget.app",
+      "developerName": "Sebastjan Brajer",
+      "subtitle": "The Download Station remote Synology retired.",
+      "category": "utilities",
+      "tintColor": "#3F97E3",
+      "iconURL": "https://sebastjanb.github.io/elistore-releases/assets/dsget-icon.png",
+      "localizedDescription": "A rebuild of Synology's DS get — the Download Station remote that was pulled from the app stores — written against Synology's official Download Station Web API. It talks to your own NAS directly. No Synology account, no vendor cloud, no third party in the middle.\n\nEverything the original did, mapped one-to-one onto the documented API:\n\n• Task list with live progress, size, per-task down/up speed, ETA and destination folder. Six filter tabs and six sort orders.\n• Task detail with the original's five tabs — General, Transfer, Files, Trackers, Peers. The BT-only tabs hide themselves for HTTP, FTP and NZB downloads.\n• Add downloads from HTTP/FTP URLs, magnet links and ED2K links (several at once), or by opening a .torrent or .nzb file from anywhere in iOS. Optional site credentials, unzip password and destination folder.\n• Pause, resume, delete with “keep partial files”, change destination, resume-all, pause-all, clear-completed.\n• Multi-select — long-press a task to start selecting, then act on the batch.\n• BT Search across the search modules enabled in Download Station, with server-side sorting and category filtering.\n• RSS feeds configured on the NAS, their items, manual refresh and download from an item.\n• Settings for speed limits, download schedule, eMule service, auto-extract and default destination.\n• Several NASes, switchable, each with its own saved session, reachable by address or by QuickConnect ID from anywhere — LAN, DDNS, SmartDNS or Synology's relay, whichever answers.\n• A share extension: send a magnet or a link into DS get from any app.\n• A destination browser over File Station, with a typed-path fallback.\n• 2-step verification, including “trust this device”.\n• Global transfer rates in the header.\n\nSession IDs and 2-step device tokens live in the Keychain. Passwords are never written to disk, and every login is sent as a POST body so credentials never appear in a URL or a log. A per-server “accept self-signed certificate” switch trusts your NAS's certificate for that host only, leaving normal validation in place everywhere else.\n\nRequires Download Station on a Synology NAS running DSM 6 or 7.",
+      "screenshots": [],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": [
+          {
+            "name": "LocalNetwork",
+            "usageDescription": "DS get connects to your Synology NAS on your local network to manage Download Station."
+          }
+        ]
+      },
+      "versions": [
+        {
+          "version": "1.4",
+          "buildVersion": "5",
+          "date": "2026-08-22",
+          "localizedDescription": "You stay signed in now, and the login screen is rebuilt to match the original app.\n\nSessions expire on the NAS's own schedule, and the app treated that as a dead end — it cleared everything and returned to a login screen that remembered nothing, so getting back in meant re-entering the QuickConnect ID, the account and the password even without leaving the house. \"Remember me\" now keeps the password in the Keychain, pinned to this device and readable only while it is unlocked, and an expired session triggers a silent sign-in instead of a logout. Signing out deliberately still forgets the password; an expired session does not.\n\nThe login screen is one field taking either an address or a QuickConnect ID, then account and password, with HTTPS and \"Remember me\" inline — and it accepts host:port for a NAS on a non-standard port. Editing a NAS and typing on the login screen now stay in step in both directions.\n\nAlso fixed: ports are validated against 1–65535 rather than silently saving something like 59998080, and \"Remember me\" no longer switches itself off between tapping it and signing in.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/dsget-v1.4/DSget.ipa",
+          "size": 878905,
+          "sha256": "a70881f1c4a9551bf6537525d110d4b91452a5a2a5474eb90dece2a93d63de5f",
+          "minOSVersion": "17.0"
+        },
+        {
+          "version": "1.3",
+          "buildVersion": "4",
+          "date": "2026-08-22",
+          "localizedDescription": "Uploading a .torrent works now. 1.2 fixed adding downloads by URL; this fixes the file-upload path, which was failing the same way for a different reason.\n\n1.2 deliberately left uploads on the classic API, on the grounds that the newer one pairs the upload with an array of filename hash codes and looked fragile to reproduce for no gain. That was the wrong call — it was exactly the failing path. The real contract names each uploaded part by an Apache HashCodeBuilder hash of its filename, sends every parameter as its own form-data part, and quotes \"file\" as a JSON string where the URL case wants a bare word. Both the app and the web build now reproduce all of it, falling back to the classic upload only where the NAS does not advertise SYNO.DownloadStation2.Task.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/dsget-v1.3/DSget.ipa",
+          "size": 866158,
+          "sha256": "50eda43420b81a5e8d3b97f72bc33bf8f2020af3548ad79153dcbfcbbd75c260",
+          "minOSVersion": "17.0"
+        },
+        {
+          "version": "1.2",
+          "buildVersion": "3",
+          "date": "2026-08-22",
+          "localizedDescription": "Adding a download works. It never did before — this fixes 1.0 and 1.1 alike.\n\nCreating a task always failed with error 101. The cause was the API version, not the destination: DSM 7 advertises SYNO.DownloadStation.Task maxVersion 3, this client negotiated the highest available, and create at v3 rejects the documented uri parameter. Error 101 is a generic \"invalid parameter\" and says nothing about the version, which is what made it look like a destination problem.\n\nBoth the app and the web build now send the same versions Synology's own client does: v1 for list, getinfo, pause, resume and delete; v2 for edit; and SYNO.DownloadStation2.Task v1 for create where the NAS advertises it, falling back to the classic API at v2. File uploads stay on the classic API, which is what the published spec documents.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/dsget-v1.2/DSget.ipa",
+          "size": 861675,
+          "sha256": "96caf040dc575679be4d1ffe7dea8dc706fa49176fb802c9c68f9e8e62248b57",
+          "minOSVersion": "17.0"
+        },
+        {
+          "version": "1.1",
+          "buildVersion": "2",
+          "date": "2026-08-22",
+          "localizedDescription": "QuickConnect now works from outside your own network.\n\nResolution was broken three ways at once: only the first step ran, so the relay address was never fetched; every candidate was built as https, which can never reach a NAS publishing plain HTTP on 5000; and the relay was assumed to speak TLS when it speaks HTTP. Candidates are now tried LAN first and relay last, and each one is checked against the NAS's own ezid so it cannot connect to a stranger's DiskStation at the same private address on a foreign network. The QuickConnect ID is stored with the server and re-resolved whenever the address stops answering.\n\nNew: a share extension — share a magnet or a link from any app straight into DS get. New: a real destination browser over File Station, instead of only top-level shared folders.\n\nAlso fixed: leaving the destination on the default now sends Download Station's own default explicitly, .torrent and .nzb files actually associate with the app, and an ATS key was removed whose mere presence made iOS block the public relay hostname.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/dsget-v1.1/DSget.ipa",
+          "size": 860003,
+          "sha256": "65403c972e74ad12ef563be542ed9c62006ac25f9e742bbf2053e95d1fa0b47e",
+          "minOSVersion": "17.0"
+        },
+        {
+          "version": "1.0",
+          "buildVersion": "1",
+          "date": "2026-08-21",
+          "localizedDescription": "First release.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/dsget-v1.0/DSget.ipa",
+          "size": 756137,
+          "sha256": "89199d73d4a3a35aac32e02c8a676b5f13e177217cef0cdf9e2f37a81b866a18",
+          "minOSVersion": "17.0"
+        }
+      ],
+      "version": "1.4",
+      "versionDate": "2026-08-22",
+      "versionDescription": "You stay signed in now, and the login screen is rebuilt to match the original app.\n\nSessions expire on the NAS's own schedule, and the app treated that as a dead end — it cleared everything and returned to a login screen that remembered nothing, so getting back in meant re-entering the QuickConnect ID, the account and the password even without leaving the house. \"Remember me\" now keeps the password in the Keychain, pinned to this device and readable only while it is unlocked, and an expired session triggers a silent sign-in instead of a logout. Signing out deliberately still forgets the password; an expired session does not.\n\nThe login screen is one field taking either an address or a QuickConnect ID, then account and password, with HTTPS and \"Remember me\" inline — and it accepts host:port for a NAS on a non-standard port. Editing a NAS and typing on the login screen now stay in step in both directions.\n\nAlso fixed: ports are validated against 1–65535 rather than silently saving something like 59998080, and \"Remember me\" no longer switches itself off between tapping it and signing in.",
+      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/dsget-v1.4/DSget.ipa",
+      "size": 878905
+    },
+    {
+      "name": "StormDrive",
+      "bundleIdentifier": "com.sebastjanbrajer.stormdrive",
+      "developerName": "Sebastjan Brajer",
+      "subtitle": "Drive Anki Overdrive cars, no servers required.",
+      "category": "games",
+      "tintColor": "#4FC3FF",
+      "iconURL": "https://sebastjanb.github.io/elistore-releases/assets/stormdrive-icon.png",
+      "localizedDescription": "A native iPhone app for driving Anki Overdrive and Anki Drive cars, talking the vehicle protocol directly over Bluetooth LE. No Anki servers, no accounts — the cars work exactly as they always did.\n\nGARAGE\nFinds every car in range, shows signal and battery, one tap to connect. Multiple cars at once.\n\nDRIVE\nFour interchangeable control schemes — throttle + lane pads, tilt steering, virtual joystick, or an MFi / PlayStation / Xbox controller. Live speed dial, lane position, battery and a speed trace. Boost, U-turn, headlights and a hard stop. The lightning storm behind the HUD answers to how fast the car is actually going.\n\nRACE\nCountdown, lap timing, live leaderboard with best and last laps, and a session-record highlight. Autopilot can drive a car for you at three aggression levels.\n\nTRACK\nDrive one slow lap and the app maps the layout, then draws it as a live map with every car moving on it.\n\nSETUP\nControl scheme, speed ceilings, storm intensity, haptics, and a demo mode that runs three simulated cars so you can try everything with no hardware in range.\n\nWorks with the original Anki Drive and Anki Overdrive vehicles. Bluetooth permission is required; tilt steering additionally asks for motion access the first time you pick it.",
+      "screenshots": [],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": [
+          {
+            "name": "Bluetooth",
+            "usageDescription": "StormDrive uses Bluetooth to find and drive your Anki Overdrive cars."
+          },
+          {
+            "name": "Motion",
+            "usageDescription": "Tilt steering uses the motion sensors to steer your car."
+          }
+        ]
+      },
+      "versions": [
+        {
+          "version": "1.0",
+          "buildVersion": "1",
+          "date": "2026-08-21",
+          "localizedDescription": "First release.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/stormdrive-v1.0/StormDrive.ipa",
+          "size": 562867,
+          "sha256": "386dc88fc1bc52e6e015e947a39d5eb21325d6c2c2e96b37bc13f09780412b8a",
+          "minOSVersion": "17.0"
+        }
+      ],
+      "version": "1.0",
+      "versionDate": "2026-08-21",
+      "versionDescription": "First release.",
+      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/stormdrive-v1.0/StormDrive.ipa",
+      "size": 562867
+    }
+  ],
+  "news": [
+    {
+      "identifier": "dsget-1-4",
+      "title": "DS get 1.4 — stays signed in",
+      "caption": "An expired session renews itself instead of dumping you back at an empty login screen.",
+      "date": "2026-08-22",
+      "tintColor": "#3F97E3",
+      "appID": "com.dsget.app",
+      "notify": true
+    },
+    {
+      "identifier": "elistore-launch",
+      "title": "EliStore is open",
+      "caption": "Two apps to start with: StormDrive and DS get.",
+      "date": "2026-08-21",
+      "tintColor": "#6E5AF6",
+      "url": "https://sebastjanb.github.io/elistore-releases",
+      "notify": false
+    }
+  ]
+}

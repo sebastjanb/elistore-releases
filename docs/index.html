@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EliStore — a source for AltStore and SideStore</title>
+<meta name="description" content="EliStore is a source for AltStore and SideStore. Add it once, and the apps install straight onto your iPhone.">
+<meta name="theme-color" content="#0C0A1A">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="EliStore">
+<meta property="og:description" content="A source for AltStore and SideStore. Add it once, and the apps install straight onto your iPhone.">
+<meta property="og:image" content="https://sebastjanb.github.io/elistore-releases/assets/og.png">
+
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-art" aria-hidden="true"></div>
+  <div class="wrap hero-inner">
+    <img class="hero-icon" src="assets/elistore-icon.png" alt="" width="112" height="112">
+    <h1>EliStore</h1>
+    <p class="tagline">Apps that never made it to the App Store.</p>
+
+    <div class="actions">
+      <a class="btn btn-primary" id="add-sidestore" href="#" data-scheme="sidestore">
+        Add to SideStore
+      </a>
+      <a class="btn" id="add-altstore" href="#" data-scheme="altstore">
+        Add to AltStore
+      </a>
+    </div>
+
+    <div class="source-url">
+      <label for="url" class="sr-only">Source URL</label>
+      <input id="url" type="text" readonly spellcheck="false" value="https://sebastjanb.github.io/elistore-releases/apps.json">
+      <button id="copy" type="button">Copy</button>
+    </div>
+    <p class="hint">
+      Open this page <strong>on your iPhone</strong> and tap a button above, or paste the URL into
+      Sources&nbsp;→&nbsp;Add in the app.
+    </p>
+  </div>
+</header>
+
+<main>
+  <section class="wrap section">
+    <h2>Apps</h2>
+    <div id="apps" class="apps">
+      <p class="loading">Loading the source…</p>
+    </div>
+  </section>
+
+  <section class="wrap section" id="install">
+    <h2>Getting set up</h2>
+    <p class="lede">
+      A source is only a list. Something still has to sign the apps with your Apple ID and put them
+      on the phone — that is what SideStore does.
+    </p>
+
+    <ol class="steps">
+      <li>
+        <h3>Install SideStore</h3>
+        <p>
+          Follow the setup at <a href="https://docs.sidestore.io" rel="noopener">docs.sidestore.io</a>.
+          You pair the phone with a computer once, upload the pairing file, and after that SideStore
+          refreshes apps on its own — no computer on the same Wi-Fi, no AltServer running in the
+          background.
+        </p>
+      </li>
+      <li>
+        <h3>Add EliStore</h3>
+        <p>
+          Open this page on the phone and tap <strong>Add to SideStore</strong>, or go to
+          <strong>Browse → Sources → +</strong> and paste the URL above.
+        </p>
+      </li>
+      <li>
+        <h3>Install what you want</h3>
+        <p>
+          The apps below appear under the source. Tap <strong>Free</strong>, wait for the install,
+          and trust the certificate in <strong>Settings → General → VPN &amp; Device
+          Management</strong> the first time.
+        </p>
+      </li>
+      <li>
+        <h3>Keep them alive</h3>
+        <p>
+          A free Apple ID signs apps for seven days and allows three at a time. SideStore refreshes
+          them in the background before they expire; open it once a week and they never lapse. A paid
+          Apple Developer account raises the limit and the signature lasts a year.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="wrap section faq">
+    <h2>Questions you would reasonably have</h2>
+
+    <details>
+      <summary>Does this work with AltStore too?</summary>
+      <p>
+        Yes. AltStore and SideStore read the same source format. AltStore Classic needs AltServer
+        running on a Mac or PC on the same network to refresh apps; SideStore does not, which is why
+        it is the one recommended here. AltStore PAL is a different thing — an Apple-approved EU
+        marketplace that only accepts notarised apps, so it cannot load this source.
+      </p>
+    </details>
+
+    <details>
+      <summary>The button did nothing, or the app closed.</summary>
+      <p>
+        The <code>sidestore://</code> and <code>altstore://</code> links only work on a phone that
+        already has the app installed. On a desktop browser nothing happens; on a phone without it,
+        the link can close the browser tab. Copy the URL and paste it into the app instead.
+      </p>
+    </details>
+
+    <details>
+      <summary>Why does the app expire after a week?</summary>
+      <p>
+        Because Apple's free developer certificates last seven days. Nothing here can change that.
+        SideStore re-signs before expiry as long as you open it now and then.
+      </p>
+    </details>
+
+    <details>
+      <summary>Is any of this account data leaving the phone?</summary>
+      <p>
+        Not through the store. This site serves a JSON file and some images; the IPAs are downloaded
+        from GitHub. Your Apple ID goes to SideStore and to Apple, never here.
+      </p>
+    </details>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>
+      EliStore · <a href="apps.json">apps.json</a> ·
+      built for <a href="https://sidestore.io" rel="noopener">SideStore</a> and
+      <a href="https://altstore.io" rel="noopener">AltStore</a>
+    </p>
+    <p class="small">Not affiliated with Apple, Anki, Synology, AltStore or SideStore.</p>
+  </div>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
