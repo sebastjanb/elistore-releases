@@ -22,7 +22,7 @@ clicking one on a Mac will not do anything useful.
 Add the source in SideStore:
 
 ```
-https://eli-store.netlify.app/apps.json
+https://eli-app-store.netlify.app/apps.json
 ```
 
 ## Publishing a new one
