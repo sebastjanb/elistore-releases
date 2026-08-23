@@ -142,7 +142,15 @@
       "tintColor": "#E879F9",
       "iconURL": "https://sebastjanb.github.io/elistore-releases/assets/expenses-icon.png",
       "localizedDescription": "Expense tracking for two companies at once — mileage, running costs, meetings and travel — with the Excel file accounting actually wants at the end of it.\n\nMILEAGE\nPick a starting point and a destination anywhere in Slovenia or Croatia, with stops on the way if the day had them. The distance is looked up along real roads and multiplied by the rate, doubled for a return journey. Every figure stays editable — a calculated distance is a suggestion, not a verdict.\n\nDRIVE RECORDER\nSay you are driving before you pull away and the phone counts the kilometres as you go, including while it is locked in your pocket. Stop, and it names the towns you started and finished in and hands you a mileage claim with the distance already filled in.\n\nRECEIPTS\nPhotograph one and the amount, date and supplier are read off it and entered for you. It happens on the device — no upload, no account, no waiting on a server. Slovenian, Croatian, German and English receipts all work; it knows that SKUPAJ and UKUPNO mean the total and that DDV does not.\n\nMEETINGS\nWhere it was, who you met, and the people present with their roles — the part that gets asked about later. As many guests and as many cost lines as the evening had.\n\nTRAVEL\nAny European or Balkan country, with flights, hotels, taxis, trains, meals and fair fees. A Belgrade hotel bill stays in dinars, with the euro figure worked out from a rate you can correct, so the claim still matches the receipt. Outside the EU roaming area it says so and offers the eSIM line before the phone bill reminds you.\n\nEXPORT\nA workbook with a summary sheet and one sheet per kind of expense, cost lines broken out, real dates and euro formatting — plus CSV, and a backup file that carries the receipt photos with it.\n\nEverything stays on the device until you export it.",
-      "screenshots": [],
+      "screenshots": [
+        "https://sebastjanb.github.io/elistore-releases/assets/screenshots/expenses-01-dashboard.png",
+        "https://sebastjanb.github.io/elistore-releases/assets/screenshots/expenses-02-entries.png",
+        "https://sebastjanb.github.io/elistore-releases/assets/screenshots/expenses-03-mileage.png",
+        "https://sebastjanb.github.io/elistore-releases/assets/screenshots/expenses-04-drive.png",
+        "https://sebastjanb.github.io/elistore-releases/assets/screenshots/expenses-06-travel.png",
+        "https://sebastjanb.github.io/elistore-releases/assets/screenshots/expenses-07-currencies.png",
+        "https://sebastjanb.github.io/elistore-releases/assets/screenshots/expenses-05-export.png"
+      ],
       "appPermissions": {
         "entitlements": [],
         "privacy": [
@@ -162,6 +170,16 @@
       },
       "versions": [
         {
+          "version": "1.1",
+          "buildVersion": "2",
+          "date": "2026-08-23",
+          "localizedDescription": "Fixes found while putting the store listing together.\n\n• Opening a saved mileage claim looked the route up again and quietly replaced the distance — a claim you reopened to correct a typo could come back with a different amount. Saved claims are now left exactly as they were; Recalculate still does it on demand.\n• A foreign-currency cost line lost precision as soon as you opened it: an exchange rate of 0,00854 was shown rounded to four places and then written back at that rounding, changing the total of a trip nobody had edited.\n• The month picker on the Export screen came up blank instead of showing the current month.\n• On the drive recorder the route name was squeezed to nothing and the Start button broke across two lines.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.1/Expenses.ipa",
+          "size": 1018524,
+          "sha256": "ca300bf3e10b9a77aca9c19a096544478b673a4b978309c41436514ff678c37e",
+          "minOSVersion": "18.0"
+        },
+        {
           "version": "1.0",
           "buildVersion": "1",
           "date": "2026-08-23",
@@ -172,11 +190,11 @@
           "minOSVersion": "18.0"
         }
       ],
-      "version": "1.0",
+      "version": "1.1",
       "versionDate": "2026-08-23",
-      "versionDescription": "First release.",
-      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.0/Expenses.ipa",
-      "size": 1009850
+      "versionDescription": "Fixes found while putting the store listing together.\n\n• Opening a saved mileage claim looked the route up again and quietly replaced the distance — a claim you reopened to correct a typo could come back with a different amount. Saved claims are now left exactly as they were; Recalculate still does it on demand.\n• A foreign-currency cost line lost precision as soon as you opened it: an exchange rate of 0,00854 was shown rounded to four places and then written back at that rounding, changing the total of a trip nobody had edited.\n• The month picker on the Export screen came up blank instead of showing the current month.\n• On the drive recorder the route name was squeezed to nothing and the Start button broke across two lines.",
+      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.1/Expenses.ipa",
+      "size": 1018524
     }
   ],
   "news": [
