@@ -119,6 +119,107 @@
 
   /* ------------------------------------------------------------- the list */
 
+  /* ------------------------------------------------------------ shots */
+
+  /* The source format allows three shapes for `screenshots`: a plain array of
+   * URLs, an array of { imageURL } objects, or an object keyed by device.
+   * Flatten whichever arrived — a listing should not care. */
+  const screenshotsOf = (app) => {
+    const raw = app.screenshots;
+    const list = Array.isArray(raw)
+      ? raw
+      : (raw && typeof raw === 'object' ? [...(raw.iphone ?? []), ...(raw.ipad ?? [])] : []);
+    return list
+      .map((entry) => (typeof entry === 'string' ? entry : entry?.imageURL))
+      .filter(Boolean)
+      .map(localise);
+  };
+
+  /* One lightbox, reused by every card. */
+  const lightbox = (() => {
+    let shots = [];
+    let index = 0;
+
+    const root = el('div', 'lightbox');
+    root.hidden = true;
+    const image = el('img', 'lightbox-img');
+    image.alt = '';
+    const counter = el('p', 'lightbox-count');
+    const close = el('button', 'lightbox-close', '\u00d7');
+    close.type = 'button';
+    close.setAttribute('aria-label', 'Close');
+    const prev = el('button', 'lightbox-nav lightbox-prev', '\u2039');
+    prev.type = 'button';
+    prev.setAttribute('aria-label', 'Previous screenshot');
+    const next = el('button', 'lightbox-nav lightbox-next', '\u203a');
+    next.type = 'button';
+    next.setAttribute('aria-label', 'Next screenshot');
+    root.append(close, prev, image, next, counter);
+    document.body.append(root);
+
+    const show = () => {
+      image.src = shots[index];
+      counter.textContent = `${index + 1} of ${shots.length}`;
+      prev.hidden = next.hidden = shots.length < 2;
+    };
+    const move = (step) => {
+      index = (index + step + shots.length) % shots.length;
+      show();
+    };
+    const hide = () => {
+      root.hidden = true;
+      image.removeAttribute('src');
+      document.body.classList.remove('no-scroll');
+    };
+
+    close.addEventListener('click', hide);
+    prev.addEventListener('click', () => move(-1));
+    next.addEventListener('click', () => move(1));
+    /* Clicking the backdrop closes; clicking the picture itself must not. */
+    root.addEventListener('click', (event) => { if (event.target === root) hide(); });
+    document.addEventListener('keydown', (event) => {
+      if (root.hidden) return;
+      if (event.key === 'Escape') hide();
+      if (event.key === 'ArrowLeft') move(-1);
+      if (event.key === 'ArrowRight') move(1);
+    });
+
+    return (list, start) => {
+      shots = list;
+      index = start;
+      root.hidden = false;
+      document.body.classList.add('no-scroll');
+      show();
+      close.focus();
+    };
+  })();
+
+  const renderShots = (app) => {
+    const shots = screenshotsOf(app);
+    if (!shots.length) return null;
+
+    const strip = el('div', 'shots');
+    strip.setAttribute('role', 'list');
+    shots.forEach((url, position) => {
+      const button = el('button', 'shot');
+      button.type = 'button';
+      button.setAttribute('role', 'listitem');
+      button.setAttribute('aria-label', `${app.name} screenshot ${position + 1}`);
+      const image = el('img');
+      image.src = url;
+      image.alt = '';
+      image.loading = 'lazy';
+      image.decoding = 'async';
+      /* A screenshot that will not load should take the tile with it rather
+       * than leave a broken-image gap in the strip. */
+      image.addEventListener('error', () => button.remove(), { once: true });
+      button.append(image);
+      button.addEventListener('click', () => lightbox(shots, position));
+      strip.append(button);
+    });
+    return strip;
+  };
+
   function renderApp(app) {
     const card = el('article', 'app');
 
@@ -175,6 +276,9 @@
         body.append(more);
       }
     }
+
+    const shots = renderShots(app);
+    if (shots) body.append(shots);
 
     const links = el('div', 'app-links');
     if (latest?.downloadURL && latest.size) {
