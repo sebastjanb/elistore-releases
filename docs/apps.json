@@ -170,6 +170,16 @@
       },
       "versions": [
         {
+          "version": "1.5",
+          "buildVersion": "6",
+          "date": "2026-08-24",
+          "localizedDescription": "The Excel export was producing a file Excel called damaged, and this fixes it.\n\nThe stylesheet was inside the file but never linked to the workbook, so Excel reported a problem and, on recovery, threw every format away — dates came out as numbers like 46258 and amounts lost their euro sign. Both are right again.\n\n• EPSON claims are now dressed in Epson blue; ATMOCE keeps the violet.\n• The summary says \"Prepared by\" with your name and \"Prepared on\" with the date.\n• Every entry can be deleted from inside its own editor, not only by swiping in the list — which was the only way on the Mac, where there is nothing to swipe.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.5/Expenses.ipa",
+          "size": 1172988,
+          "sha256": "57ce49477ce6f72d98dc0c91223d5225dfea4b75689d32c6436f273b51e5fede",
+          "minOSVersion": "18.0"
+        },
+        {
           "version": "1.4",
           "buildVersion": "5",
           "date": "2026-08-24",
@@ -220,11 +230,11 @@
           "minOSVersion": "18.0"
         }
       ],
-      "version": "1.4",
+      "version": "1.5",
       "versionDate": "2026-08-24",
-      "versionDescription": "Journeys can now start and end at an address, not just a town.\n\nType a street or a place name and it completes as you go, the way Maps does — \"Dunajska cesta 50\" finds the Ljubljana one and the Lukovica one and lets you say which. The distance is then measured to that door rather than to the middle of the town, which for a customer on the far edge of somewhere is a different claim. Addresses you have used before are offered first, since the same customers come round again, and \"Where I am now\" gives the street you are standing in.\n\nTowns still work exactly as before and still work with no signal; addresses need a connection.\n\nAlso: the bottom row of an editor no longer scrolls underneath the total bar.",
-      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.4/Expenses.ipa",
-      "size": 1167155
+      "versionDescription": "The Excel export was producing a file Excel called damaged, and this fixes it.\n\nThe stylesheet was inside the file but never linked to the workbook, so Excel reported a problem and, on recovery, threw every format away — dates came out as numbers like 46258 and amounts lost their euro sign. Both are right again.\n\n• EPSON claims are now dressed in Epson blue; ATMOCE keeps the violet.\n• The summary says \"Prepared by\" with your name and \"Prepared on\" with the date.\n• Every entry can be deleted from inside its own editor, not only by swiping in the list — which was the only way on the Mac, where there is nothing to swipe.",
+      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.5/Expenses.ipa",
+      "size": 1172988
     }
   ],
   "news": [
