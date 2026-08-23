@@ -170,6 +170,16 @@
       },
       "versions": [
         {
+          "version": "1.6",
+          "buildVersion": "7",
+          "date": "2026-08-24",
+          "localizedDescription": "Syncing is one button, and the exported workbook is cut down to what the claim forms actually ask for.\n\nSYNC\nPair the two devices once, then it is a single Sync button on either — come home, open the laptop, press it. A paired device offers itself automatically whenever the app is open. Sync now sits at the top of Settings.\n\nEXPORT\n• Mileage: one Journey column reading \"Ljubljana – Zagreb – Ljubljana\" for a return trip. Via, return, contact, distance source, note, company and claimed-by columns are gone.\n• Meetings and travel each come out as one sheet instead of two, so a cost line carries what it was for.\n• EPSON workbooks drop the supplier and receipt columns.\n\nFIXED\nOn the Mac, the new-entry dialog silently dropped everything past the third option — Travel and the drive recorder were unreachable. It is a menu now.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.6/Expenses.ipa",
+          "size": 1191571,
+          "sha256": "6a49057b80c23de67e6041b73a9549d4b7e78bbd3875ea06a0d4af3cf10cc6c3",
+          "minOSVersion": "18.0"
+        },
+        {
           "version": "1.5",
           "buildVersion": "6",
           "date": "2026-08-24",
@@ -230,11 +240,11 @@
           "minOSVersion": "18.0"
         }
       ],
-      "version": "1.5",
+      "version": "1.6",
       "versionDate": "2026-08-24",
-      "versionDescription": "The Excel export was producing a file Excel called damaged, and this fixes it.\n\nThe stylesheet was inside the file but never linked to the workbook, so Excel reported a problem and, on recovery, threw every format away — dates came out as numbers like 46258 and amounts lost their euro sign. Both are right again.\n\n• EPSON claims are now dressed in Epson blue; ATMOCE keeps the violet.\n• The summary says \"Prepared by\" with your name and \"Prepared on\" with the date.\n• Every entry can be deleted from inside its own editor, not only by swiping in the list — which was the only way on the Mac, where there is nothing to swipe.",
-      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.5/Expenses.ipa",
-      "size": 1172988
+      "versionDescription": "Syncing is one button, and the exported workbook is cut down to what the claim forms actually ask for.\n\nSYNC\nPair the two devices once, then it is a single Sync button on either — come home, open the laptop, press it. A paired device offers itself automatically whenever the app is open. Sync now sits at the top of Settings.\n\nEXPORT\n• Mileage: one Journey column reading \"Ljubljana – Zagreb – Ljubljana\" for a return trip. Via, return, contact, distance source, note, company and claimed-by columns are gone.\n• Meetings and travel each come out as one sheet instead of two, so a cost line carries what it was for.\n• EPSON workbooks drop the supplier and receipt columns.\n\nFIXED\nOn the Mac, the new-entry dialog silently dropped everything past the third option — Travel and the drive recorder were unreachable. It is a menu now.",
+      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.6/Expenses.ipa",
+      "size": 1191571
     }
   ],
   "news": [
