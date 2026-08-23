@@ -170,6 +170,16 @@
       },
       "versions": [
         {
+          "version": "1.2",
+          "buildVersion": "3",
+          "date": "2026-08-23",
+          "localizedDescription": "• On the Mac, choosing a town opened a sheet with no room for the results — you could type into the search box but nothing could ever appear below it. The sheet now opens at a usable size with a proper search field.\n• Five entries in the town list were not towns: GeoNames marks historical church seats with a code that the list builder mistook for an administrative seat, so searching \"koper\" offered the Roman Catholic Diocese of Koper alongside the town.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.2/Expenses.ipa",
+          "size": 1018392,
+          "sha256": "d98758fe15305ef03e2b192d26cb12475cd1f8e6dceefc22c7cde95a5705cbe0",
+          "minOSVersion": "18.0"
+        },
+        {
           "version": "1.1",
           "buildVersion": "2",
           "date": "2026-08-23",
@@ -190,11 +200,11 @@
           "minOSVersion": "18.0"
         }
       ],
-      "version": "1.1",
+      "version": "1.2",
       "versionDate": "2026-08-23",
-      "versionDescription": "Fixes found while putting the store listing together.\n\n• Opening a saved mileage claim looked the route up again and quietly replaced the distance — a claim you reopened to correct a typo could come back with a different amount. Saved claims are now left exactly as they were; Recalculate still does it on demand.\n• A foreign-currency cost line lost precision as soon as you opened it: an exchange rate of 0,00854 was shown rounded to four places and then written back at that rounding, changing the total of a trip nobody had edited.\n• The month picker on the Export screen came up blank instead of showing the current month.\n• On the drive recorder the route name was squeezed to nothing and the Start button broke across two lines.",
-      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.1/Expenses.ipa",
-      "size": 1018524
+      "versionDescription": "• On the Mac, choosing a town opened a sheet with no room for the results — you could type into the search box but nothing could ever appear below it. The sheet now opens at a usable size with a proper search field.\n• Five entries in the town list were not towns: GeoNames marks historical church seats with a code that the list builder mistook for an administrative seat, so searching \"koper\" offered the Roman Catholic Diocese of Koper alongside the town.",
+      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.2/Expenses.ipa",
+      "size": 1018392
     }
   ],
   "news": [
