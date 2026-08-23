@@ -141,7 +141,7 @@
       "category": "utilities",
       "tintColor": "#E879F9",
       "iconURL": "https://sebastjanb.github.io/elistore-releases/assets/expenses-icon.png",
-      "localizedDescription": "Expense tracking for two companies at once — mileage, running costs, meetings and travel — with the Excel file accounting actually wants at the end of it.\n\nMILEAGE\nPick a starting point and a destination anywhere in Slovenia or Croatia, with stops on the way if the day had them. The distance is looked up along real roads and multiplied by the rate, doubled for a return journey. Every figure stays editable — a calculated distance is a suggestion, not a verdict.\n\nDRIVE RECORDER\nSay you are driving before you pull away and the phone counts the kilometres as you go, including while it is locked in your pocket. Stop, and it names the towns you started and finished in and hands you a mileage claim with the distance already filled in.\n\nRECEIPTS\nPhotograph one and the amount, date and supplier are read off it and entered for you. It happens on the device — no upload, no account, no waiting on a server. Slovenian, Croatian, German and English receipts all work; it knows that SKUPAJ and UKUPNO mean the total and that DDV does not.\n\nMEETINGS\nWhere it was, who you met, and the people present with their roles — the part that gets asked about later. As many guests and as many cost lines as the evening had.\n\nTRAVEL\nAny European or Balkan country, with flights, hotels, taxis, trains, meals and fair fees. A Belgrade hotel bill stays in dinars, with the euro figure worked out from a rate you can correct, so the claim still matches the receipt. Outside the EU roaming area it says so and offers the eSIM line before the phone bill reminds you.\n\nEXPORT\nA workbook with a summary sheet and one sheet per kind of expense, cost lines broken out, real dates and euro formatting — plus CSV, and a backup file that carries the receipt photos with it.\n\nEverything stays on the device until you export it.",
+      "localizedDescription": "Expense tracking for two companies at once — mileage, running costs, meetings and travel — with the Excel file accounting actually wants at the end of it.\n\nMILEAGE\nPick a starting point and a destination anywhere in Slovenia or Croatia, with stops on the way if the day had them. The distance is looked up along real roads and multiplied by the rate, doubled for a return journey. Every figure stays editable — a calculated distance is a suggestion, not a verdict.\n\nDRIVE RECORDER\nSay you are driving before you pull away and the phone counts the kilometres as you go, including while it is locked in your pocket. Stop, and it names the towns you started and finished in and hands you a mileage claim with the distance already filled in.\n\nRECEIPTS\nPhotograph one and the amount, date and supplier are read off it and entered for you. It happens on the device — no upload, no account, no waiting on a server. Slovenian, Croatian, German and English receipts all work; it knows that SKUPAJ and UKUPNO mean the total and that DDV does not.\n\nMEETINGS\nWhere it was, who you met, and the people present with their roles — the part that gets asked about later. As many guests and as many cost lines as the evening had.\n\nTRAVEL\nAny European or Balkan country, with flights, hotels, taxis, trains, meals and fair fees. A Belgrade hotel bill stays in dinars, with the euro figure worked out from a rate you can correct, so the claim still matches the receipt. Outside the EU roaming area it says so and offers the eSIM line before the phone bill reminds you.\n\nSYNC\nThe iPhone and the Mac reconcile over your own Wi-Fi, with an encrypted link keyed to a six-digit code you type once. Nothing goes to anyone's server.\n\nEXPORT\nA workbook with a summary sheet and one sheet per kind of expense, cost lines broken out, real dates and euro formatting — plus CSV, and a backup file that carries the receipt photos with it.\n\nEverything stays on the device until you export it.",
       "screenshots": [
         "https://sebastjanb.github.io/elistore-releases/assets/screenshots/expenses-01-dashboard.png",
         "https://sebastjanb.github.io/elistore-releases/assets/screenshots/expenses-02-entries.png",
@@ -169,6 +169,16 @@
         ]
       },
       "versions": [
+        {
+          "version": "1.3",
+          "buildVersion": "4",
+          "date": "2026-08-23",
+          "localizedDescription": "Sync between the iPhone and the Mac over your own Wi-Fi.\n\nOne device offers to sync and shows a six-digit code, the other finds it and enters it. The link is encrypted with a key derived from that code, so nothing readable crosses the network. The newest version of each entry wins, and a deletion on one device is a deletion on both rather than something the other device helpfully puts back.\n\nBoth devices need this version, and both need to be on the same network with the sync screen open on the one offering. iOS will ask for local network permission the first time.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.3/Expenses.ipa",
+          "size": 1128555,
+          "sha256": "0d6b3a80f72d271e96a1e334026835db5b28dc4d15c004ba0d95e864e283ae78",
+          "minOSVersion": "18.0"
+        },
         {
           "version": "1.2",
           "buildVersion": "3",
@@ -200,11 +210,11 @@
           "minOSVersion": "18.0"
         }
       ],
-      "version": "1.2",
+      "version": "1.3",
       "versionDate": "2026-08-23",
-      "versionDescription": "• On the Mac, choosing a town opened a sheet with no room for the results — you could type into the search box but nothing could ever appear below it. The sheet now opens at a usable size with a proper search field.\n• Five entries in the town list were not towns: GeoNames marks historical church seats with a code that the list builder mistook for an administrative seat, so searching \"koper\" offered the Roman Catholic Diocese of Koper alongside the town.",
-      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.2/Expenses.ipa",
-      "size": 1018392
+      "versionDescription": "Sync between the iPhone and the Mac over your own Wi-Fi.\n\nOne device offers to sync and shows a six-digit code, the other finds it and enters it. The link is encrypted with a key derived from that code, so nothing readable crosses the network. The newest version of each entry wins, and a deletion on one device is a deletion on both rather than something the other device helpfully puts back.\n\nBoth devices need this version, and both need to be on the same network with the sync screen open on the one offering. iOS will ask for local network permission the first time.",
+      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.3/Expenses.ipa",
+      "size": 1128555
     }
   ],
   "news": [
