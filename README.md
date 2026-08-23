@@ -12,6 +12,7 @@ The apps themselves are built from private repositories. Each release here is ta
 |---|---|---|
 | `stormdrive-v*` | StormDrive — Anki Overdrive controller | `com.sebastjanbrajer.stormdrive` |
 | `dsget-v*` | DS get — Synology Download Station remote | `com.dsget.app` |
+| `expenses-v*` | Expenses — mileage, receipts and travel for ATMOCE and EPSON | `com.sebastjanbrajer.expenses` |
 
 The IPAs are **unsigned**. They are meant to be installed through
 [SideStore](https://sidestore.io), which re-signs them with your own Apple ID. Double-

@@ -10,6 +10,7 @@
   "website": "https://sebastjanb.github.io/elistore-releases",
   "tintColor": "#6E5AF6",
   "featuredApps": [
+    "com.sebastjanbrajer.expenses",
     "com.sebastjanbrajer.stormdrive",
     "com.dsget.app"
   ],
@@ -131,6 +132,51 @@
       "versionDescription": "First release.",
       "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/stormdrive-v1.0/StormDrive.ipa",
       "size": 562867
+    },
+    {
+      "name": "Expenses",
+      "bundleIdentifier": "com.sebastjanbrajer.expenses",
+      "developerName": "Sebastjan Brajer",
+      "subtitle": "Mileage, receipts and travel, straight into Excel.",
+      "category": "utilities",
+      "tintColor": "#E879F9",
+      "iconURL": "https://sebastjanb.github.io/elistore-releases/assets/expenses-icon.png",
+      "localizedDescription": "Expense tracking for two companies at once — mileage, running costs, meetings and travel — with the Excel file accounting actually wants at the end of it.\n\nMILEAGE\nPick a starting point and a destination anywhere in Slovenia or Croatia, with stops on the way if the day had them. The distance is looked up along real roads and multiplied by the rate, doubled for a return journey. Every figure stays editable — a calculated distance is a suggestion, not a verdict.\n\nDRIVE RECORDER\nSay you are driving before you pull away and the phone counts the kilometres as you go, including while it is locked in your pocket. Stop, and it names the towns you started and finished in and hands you a mileage claim with the distance already filled in.\n\nRECEIPTS\nPhotograph one and the amount, date and supplier are read off it and entered for you. It happens on the device — no upload, no account, no waiting on a server. Slovenian, Croatian, German and English receipts all work; it knows that SKUPAJ and UKUPNO mean the total and that DDV does not.\n\nMEETINGS\nWhere it was, who you met, and the people present with their roles — the part that gets asked about later. As many guests and as many cost lines as the evening had.\n\nTRAVEL\nAny European or Balkan country, with flights, hotels, taxis, trains, meals and fair fees. A Belgrade hotel bill stays in dinars, with the euro figure worked out from a rate you can correct, so the claim still matches the receipt. Outside the EU roaming area it says so and offers the eSIM line before the phone bill reminds you.\n\nEXPORT\nA workbook with a summary sheet and one sheet per kind of expense, cost lines broken out, real dates and euro formatting — plus CSV, and a backup file that carries the receipt photos with it.\n\nEverything stays on the device until you export it.",
+      "screenshots": [],
+      "appPermissions": {
+        "entitlements": [],
+        "privacy": [
+          {
+            "name": "Location",
+            "usageDescription": "Recording the kilometres of a drive, including while the app is in the background, and filling in where a journey started."
+          },
+          {
+            "name": "Camera",
+            "usageDescription": "Photographing a receipt so the amount can be read from it."
+          },
+          {
+            "name": "PhotoLibrary",
+            "usageDescription": "Attaching a receipt you already photographed."
+          }
+        ]
+      },
+      "versions": [
+        {
+          "version": "1.0",
+          "buildVersion": "1",
+          "date": "2026-08-23",
+          "localizedDescription": "First release.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.0/Expenses.ipa",
+          "size": 1009850,
+          "sha256": "c68d4ee71d9af2c3a5edd4374be655b7034c88cc5a10e65c177013e52be03f5f",
+          "minOSVersion": "18.0"
+        }
+      ],
+      "version": "1.0",
+      "versionDate": "2026-08-23",
+      "versionDescription": "First release.",
+      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.0/Expenses.ipa",
+      "size": 1009850
     }
   ],
   "news": [
