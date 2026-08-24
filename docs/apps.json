@@ -170,6 +170,16 @@
       },
       "versions": [
         {
+          "version": "1.7",
+          "buildVersion": "8",
+          "date": "2026-08-24",
+          "localizedDescription": "Less typing, and a mileage rate that shows what it is actually using.\n\nFIXED\nThe rate box could sit empty showing \"0,00\" while the claim was correctly using 0,43 — so a total looked as though it had been worked out from nothing. The arithmetic was always right; what the box displayed was not. It now shows the value the entry holds, always.\n\nLESS TYPING\n• Venue, purpose, location, supplier, company and contact fields have a menu beside them. Venue offers Restaurant, Hotel, Office and the rest; purpose offers Sales meeting, Installation, Training and so on. Everything you type is remembered and offered next time.\n• A cost line describes itself: choose Business lunch and the description says Business lunch. Type over it and yours is kept.\n• The hint under a description now matches the type instead of always suggesting a flight.\n• Tapping anywhere in a field starts editing, not only the text itself.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.7/Expenses.ipa",
+          "size": 1205485,
+          "sha256": "b64e217078a4b99d24b35ffc71f663329527e14e387d3074f03716b7583b4121",
+          "minOSVersion": "18.0"
+        },
+        {
           "version": "1.6",
           "buildVersion": "7",
           "date": "2026-08-24",
@@ -240,11 +250,11 @@
           "minOSVersion": "18.0"
         }
       ],
-      "version": "1.6",
+      "version": "1.7",
       "versionDate": "2026-08-24",
-      "versionDescription": "Syncing is one button, and the exported workbook is cut down to what the claim forms actually ask for.\n\nSYNC\nPair the two devices once, then it is a single Sync button on either — come home, open the laptop, press it. A paired device offers itself automatically whenever the app is open. Sync now sits at the top of Settings.\n\nEXPORT\n• Mileage: one Journey column reading \"Ljubljana – Zagreb – Ljubljana\" for a return trip. Via, return, contact, distance source, note, company and claimed-by columns are gone.\n• Meetings and travel each come out as one sheet instead of two, so a cost line carries what it was for.\n• EPSON workbooks drop the supplier and receipt columns.\n\nFIXED\nOn the Mac, the new-entry dialog silently dropped everything past the third option — Travel and the drive recorder were unreachable. It is a menu now.",
-      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.6/Expenses.ipa",
-      "size": 1191571
+      "versionDescription": "Less typing, and a mileage rate that shows what it is actually using.\n\nFIXED\nThe rate box could sit empty showing \"0,00\" while the claim was correctly using 0,43 — so a total looked as though it had been worked out from nothing. The arithmetic was always right; what the box displayed was not. It now shows the value the entry holds, always.\n\nLESS TYPING\n• Venue, purpose, location, supplier, company and contact fields have a menu beside them. Venue offers Restaurant, Hotel, Office and the rest; purpose offers Sales meeting, Installation, Training and so on. Everything you type is remembered and offered next time.\n• A cost line describes itself: choose Business lunch and the description says Business lunch. Type over it and yours is kept.\n• The hint under a description now matches the type instead of always suggesting a flight.\n• Tapping anywhere in a field starts editing, not only the text itself.",
+      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.7/Expenses.ipa",
+      "size": 1205485
     }
   ],
   "news": [
