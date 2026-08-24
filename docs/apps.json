@@ -170,6 +170,16 @@
       },
       "versions": [
         {
+          "version": "1.8",
+          "buildVersion": "9",
+          "date": "2026-08-24",
+          "localizedDescription": "Every field shows one thing instead of two.\n\nOn the Mac the grey hint was staying put on the left while what you typed appeared on the right — the hint was being treated as a row label rather than as placeholder text. Now it behaves as a placeholder everywhere: visible while the field is empty, gone the moment you type.\n\n• The supplier field is gone from other expenses. A scanned receipt puts the shop's name into the description instead, where it is still useful.\n• The meeting location is typed by hand again, with no menu.",
+          "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.8/Expenses.ipa",
+          "size": 1206067,
+          "sha256": "1a406a31e9345ae0f1031024af106991a42744b3b643f297bfbe2452a22f0901",
+          "minOSVersion": "18.0"
+        },
+        {
           "version": "1.7",
           "buildVersion": "8",
           "date": "2026-08-24",
@@ -250,11 +260,11 @@
           "minOSVersion": "18.0"
         }
       ],
-      "version": "1.7",
+      "version": "1.8",
       "versionDate": "2026-08-24",
-      "versionDescription": "Less typing, and a mileage rate that shows what it is actually using.\n\nFIXED\nThe rate box could sit empty showing \"0,00\" while the claim was correctly using 0,43 — so a total looked as though it had been worked out from nothing. The arithmetic was always right; what the box displayed was not. It now shows the value the entry holds, always.\n\nLESS TYPING\n• Venue, purpose, location, supplier, company and contact fields have a menu beside them. Venue offers Restaurant, Hotel, Office and the rest; purpose offers Sales meeting, Installation, Training and so on. Everything you type is remembered and offered next time.\n• A cost line describes itself: choose Business lunch and the description says Business lunch. Type over it and yours is kept.\n• The hint under a description now matches the type instead of always suggesting a flight.\n• Tapping anywhere in a field starts editing, not only the text itself.",
-      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.7/Expenses.ipa",
-      "size": 1205485
+      "versionDescription": "Every field shows one thing instead of two.\n\nOn the Mac the grey hint was staying put on the left while what you typed appeared on the right — the hint was being treated as a row label rather than as placeholder text. Now it behaves as a placeholder everywhere: visible while the field is empty, gone the moment you type.\n\n• The supplier field is gone from other expenses. A scanned receipt puts the shop's name into the description instead, where it is still useful.\n• The meeting location is typed by hand again, with no menu.",
+      "downloadURL": "https://github.com/sebastjanb/elistore-releases/releases/download/expenses-v1.8/Expenses.ipa",
+      "size": 1206067
     }
   ],
   "news": [
