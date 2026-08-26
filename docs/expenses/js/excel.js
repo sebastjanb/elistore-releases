@@ -10,8 +10,13 @@
   const U = window.U;
   const Excel = {};
 
-  const HEADER_FILL = '2E1065';
-  const TITLE_FILL = '4C1D95';
+  /* Accent per company, as in the Mac app: EPSON claims come out in Epson
+     blue (Pantone 286 C), everything else in the house violet. */
+  const ACCENTS = {
+    violet: { header: '2E1065', title: '4C1D95', rule: '7C3AED', label: '6D28D9' },
+    epson: { header: '0033A0', title: '002678', rule: '2563EB', label: '1D4ED8' },
+  };
+  let ACCENT = ACCENTS.violet;
   const MONEY_FMT = '#,##0.00\\ "€"';
   const KM_FMT = '#,##0.0\\ "km"';
   const DATE_FMT = 'dd\\.mm\\.yyyy';
@@ -32,18 +37,29 @@
     return s === null ? txt(iso || '') : { v: s, t: 'n', z: DATE_FMT };
   };
 
-  const HEAD_STYLE = {
+  const headStyle = () => ({
     font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 10 },
-    fill: { patternType: 'solid', fgColor: { rgb: HEADER_FILL } },
+    fill: { patternType: 'solid', fgColor: { rgb: ACCENT.header } },
     alignment: { vertical: 'center', horizontal: 'left', wrapText: true },
-    border: {
-      bottom: { style: 'thin', color: { rgb: '7C3AED' } },
-    },
-  };
-  const TOTAL_STYLE = {
+    border: { bottom: { style: 'thin', color: { rgb: ACCENT.rule } } },
+  });
+  const totalStyle = () => ({
     font: { bold: true, sz: 11 },
-    border: { top: { style: 'medium', color: { rgb: '7C3AED' } } },
-  };
+    border: { top: { style: 'medium', color: { rgb: ACCENT.rule } } },
+  });
+
+  /* What a workbook shows depends on who it is for, exactly as in the Mac app:
+     EPSON's forms do not ask for receipt copies, and the company only needs
+     naming when both are in the same file. */
+  function layoutFor(meta) {
+    const label = (meta && meta.company) || '';
+    const both = label.indexOf('+') !== -1;
+    return {
+      both: both,
+      hidesReceipts: !both && label === 'EPSON',
+      namesTheCompany: both,
+    };
+  }
 
   /* Builds a worksheet from a header list and an array of cell rows. */
   function sheet(headers, rows, widths, opts) {
@@ -61,9 +77,9 @@
         }
         if (r === 0) {
           ws[addr] = ws[addr] || { v: '', t: 's' };
-          ws[addr].s = HEAD_STYLE;
+          ws[addr].s = headStyle();
         } else if (opts.totalRow && r === aoa.length - 1) {
-          if (ws[addr]) ws[addr].s = Object.assign({}, ws[addr].s, TOTAL_STYLE);
+          if (ws[addr]) ws[addr].s = Object.assign({}, ws[addr].s, totalStyle());
         }
       });
     });
@@ -82,94 +98,132 @@
   const receiptFlag = (id) => (id ? 'yes' : '');
 
   /* ── Sheet builders ────────────────────────────────────────────── */
-  function mileageSheet(rows) {
-    const head = ['Date', 'From', 'Via', 'To', 'Return', 'Kilometres', 'Rate €/km', 'Amount',
-      'Company visited', 'Contact', 'Purpose', 'Distance from', 'Note', 'Company', 'Claimed by'];
-    const body = rows.map((e) => [
-      date(e.date),
-      txt(e.from ? e.from.name : ''),
-      txt((e.via || []).map((v) => v.name).join(', ')),
-      txt(e.to ? e.to.name : ''),
-      txt(e.roundTrip ? 'yes' : ''),
-      km(e.km),
-      rate(e.rate),
-      money(e.total),
-      txt(e.visited), txt(e.contact), txt(e.purpose),
-      txt(e.kmManual !== null && e.kmManual !== undefined ? 'entered by hand'
-        : e.kmSource === 'osrm' ? 'road routing' : e.kmSource === 'gps' ? 'GPS recording' : 'estimate'),
-      txt(e.note), txt(e.company), txt(e.person),
-    ]);
-    body.push(['', '', '', '', txt('TOTAL'), km(U.sum(rows, (e) => e.km)), '', money(U.sum(rows, (e) => e.total)),
-      '', '', '', '', '', '', '']);
-    return sheet(head, body, [12, 18, 18, 18, 8, 12, 10, 13, 24, 20, 24, 15, 28, 10, 18], { totalRow: true });
+
+  /* "Ljubljana – Zagreb – Ljubljana" when the car came home again, which is
+     what the removed From / Via / To / Return columns used to say less
+     plainly. Matches the Mac app's Journey column. */
+  function journey(e) {
+    const nameOf = (p) => {
+      if (!p) return '';
+      return p.address ? p.name + ', ' + p.address : (p.name || '');
+    };
+    const legs = [nameOf(e.from)]
+      .concat((e.via || []).map(nameOf))
+      .concat([nameOf(e.to)]);
+    if (e.roundTrip && nameOf(e.from)) legs.push(nameOf(e.from));
+    return legs.filter(Boolean).join(' – ');
   }
 
-  function otherSheet(rows) {
-    const head = ['Date', 'Category', 'Supplier', 'Description', 'Amount', 'Receipt', 'Note', 'Company', 'Claimed by'];
-    const body = rows.map((e) => [
-      date(e.date),
-      txt(window.Forms.kindLabel(e.category)),
-      txt(e.vendor), txt(e.description),
-      money(e.total), txt(receiptFlag(e.receiptId)),
-      txt(e.note), txt(e.company), txt(e.person),
-    ]);
-    body.push(['', '', '', txt('TOTAL'), money(U.sum(rows, (e) => e.total)), '', '', '', '']);
-    return sheet(head, body, [12, 20, 24, 34, 13, 9, 28, 10, 18], { totalRow: true });
-  }
+  function mileageSheet(rows, L) {
+    const head = ['Date', 'Journey', 'Kilometres', 'Rate €/km', 'Amount',
+      'Company visited', 'Purpose'];
+    const widths = [12, 46, 13, 11, 14, 26, 28];
+    if (L.namesTheCompany) { head.push('Claimed for'); widths.push(13); }
 
-  function meetingSheet(rows) {
-    const head = ['Date', 'Location', 'Venue', 'Company met', 'People present', 'Purpose',
-      'Amount', 'Note', 'Company', 'Claimed by'];
-    const body = rows.map((e) => [
-      date(e.date), txt(e.location), txt(e.venue), txt(e.client),
-      txt(attendeeText(e.attendees)), txt(e.description),
-      money(e.total), txt(e.note), txt(e.company), txt(e.person),
-    ]);
-    body.push(['', '', '', '', '', txt('TOTAL'), money(U.sum(rows, (e) => e.total)), '', '', '']);
-    return sheet(head, body, [12, 18, 22, 24, 42, 28, 13, 26, 10, 18], { totalRow: true });
-  }
-
-  function meetingItemsSheet(rows) {
-    const head = ['Date', 'Company met', 'Type', 'Description', 'Currency', 'Amount',
-      'Rate to €', 'Amount €', 'Receipt', 'Company'];
-    const body = [];
-    rows.forEach((e) => {
-      (e.items || []).forEach((it) => body.push([
-        date(e.date), txt(e.client), txt(window.Forms.kindLabel(it.kind)), txt(it.description),
-        txt(it.currency || 'EUR'), { v: U.round2(it.amount), t: 'n', z: '#,##0.00' },
-        rate(it.rate || 1), money(it.amountEur), txt(receiptFlag(it.receiptId)), txt(e.company),
-      ]));
+    const body = rows.map((e) => {
+      const row = [
+        date(e.date), txt(journey(e)), km(e.km), rate(e.rate), money(e.total),
+        txt(e.visited), txt(e.purpose),
+      ];
+      if (L.namesTheCompany) row.push(txt(e.company));
+      return row;
     });
-    body.push(['', '', '', '', '', '', txt('TOTAL'), money(U.sum(body, (r) => (r[7] ? r[7].v : 0))), '', '']);
-    return sheet(head, body, [12, 24, 20, 34, 10, 13, 10, 13, 9, 10], { totalRow: true });
+
+    const total = ['', txt('TOTAL'), km(U.sum(rows, (e) => e.km)), '',
+      money(U.sum(rows, (e) => e.total)), '', ''];
+    if (L.namesTheCompany) total.push('');
+    body.push(total);
+    return sheet(head, body, widths, { totalRow: true });
   }
 
-  function travelSheet(rows) {
-    const head = ['From', 'To', 'Country', 'EU', 'City', 'Company visited', 'Purpose',
-      'Total', 'Note', 'Company', 'Claimed by'];
-    const body = rows.map((e) => [
-      date(e.date), date(e.dateTo || e.date), txt(e.countryName || e.country),
-      txt(e.eu ? 'EU' : 'non-EU'), txt(e.city), txt(e.client), txt(e.purpose),
-      money(e.total), txt(e.note), txt(e.company), txt(e.person),
-    ]);
-    body.push(['', '', '', '', '', '', txt('TOTAL'), money(U.sum(rows, (e) => e.total)), '', '', '']);
-    return sheet(head, body, [12, 12, 20, 8, 18, 24, 26, 13, 26, 10, 18], { totalRow: true });
-  }
+  function otherSheet(rows, L) {
+    const head = ['Date', 'Category', 'Description', 'Amount'];
+    const widths = [12, 22, 38, 14];
+    if (!L.hidesReceipts) { head.push('Receipt'); widths.push(10); }
+    if (L.namesTheCompany) { head.push('Claimed for'); widths.push(13); }
 
-  function travelItemsSheet(rows) {
-    const head = ['Date', 'Country', 'City', 'Type', 'Description', 'Currency', 'Amount',
-      'Rate to €', 'Amount €', 'Receipt', 'Company'];
-    const body = [];
-    rows.forEach((e) => {
-      (e.items || []).forEach((it) => body.push([
-        date(e.date), txt(e.countryName || e.country), txt(e.city),
-        txt(window.Forms.kindLabel(it.kind)), txt(it.description),
-        txt(it.currency || 'EUR'), { v: U.round2(it.amount), t: 'n', z: '#,##0.00' },
-        rate(it.rate || 1), money(it.amountEur), txt(receiptFlag(it.receiptId)), txt(e.company),
-      ]));
+    const body = rows.map((e) => {
+      const row = [date(e.date), txt(window.Forms.kindLabel(e.category)),
+        txt(e.description), money(e.total)];
+      if (!L.hidesReceipts) row.push(txt(receiptFlag(e.receiptId)));
+      if (L.namesTheCompany) row.push(txt(e.company));
+      return row;
     });
-    body.push(['', '', '', '', '', '', '', txt('TOTAL'), money(U.sum(body, (r) => (r[8] ? r[8].v : 0))), '', '']);
-    return sheet(head, body, [12, 20, 18, 20, 34, 10, 13, 10, 13, 9, 10], { totalRow: true });
+
+    const total = new Array(head.length).fill('');
+    const amountAt = head.indexOf('Amount');
+    total[amountAt - 1] = txt('TOTAL');
+    total[amountAt] = money(U.sum(rows, (e) => e.total));
+    body.push(total);
+    return sheet(head, body, widths, { totalRow: true });
+  }
+
+  /* Meetings and their costs on one sheet: a row per cost line carrying the
+     meeting it belongs to. Two sheets meant cross-referencing by date to
+     answer "what was this dinner for". */
+  function meetingSheet(rows, L) {
+    const head = ['Date', 'Location', 'Company', 'What it was about', 'Type',
+      'Currency', 'Amount', 'Rate to €', 'Amount €'];
+    const widths = [12, 20, 26, 30, 20, 10, 14, 11, 14];
+    if (!L.hidesReceipts) { head.push('Receipt'); widths.push(10); }
+    if (L.namesTheCompany) { head.push('Claimed for'); widths.push(13); }
+
+    const body = [];
+    let sum = 0;
+    rows.forEach((e) => {
+      (e.items || []).forEach((it) => {
+        sum += it.amountEur || 0;
+        const row = [
+          date(e.date), txt(e.location), txt(e.client), txt(e.description),
+          txt(window.Forms.kindLabel(it.kind)), txt(it.currency || 'EUR'),
+          { v: U.round2(it.amount), t: 'n', z: '#,##0.00' },
+          rate(it.rate || 1), money(it.amountEur),
+        ];
+        if (!L.hidesReceipts) row.push(txt(receiptFlag(it.receiptId)));
+        if (L.namesTheCompany) row.push(txt(e.company));
+        body.push(row);
+      });
+    });
+
+    const total = new Array(head.length).fill('');
+    const euroAt = head.indexOf('Amount €');
+    total[euroAt - 1] = txt('TOTAL');
+    total[euroAt] = money(sum);
+    body.push(total);
+    return sheet(head, body, widths, { totalRow: true });
+  }
+
+  function travelSheet(rows, L) {
+    const head = ['Date', 'Country', 'City', 'Purpose', 'Type', 'Description',
+      'Currency', 'Amount', 'Rate to €', 'Amount €'];
+    const widths = [12, 20, 20, 28, 20, 32, 10, 14, 11, 14];
+    if (!L.hidesReceipts) { head.push('Receipt'); widths.push(10); }
+    if (L.namesTheCompany) { head.push('Claimed for'); widths.push(13); }
+
+    const body = [];
+    let sum = 0;
+    rows.forEach((e) => {
+      (e.items || []).forEach((it) => {
+        sum += it.amountEur || 0;
+        const row = [
+          date(e.date), txt(e.countryName || e.country), txt(e.city), txt(e.purpose),
+          txt(window.Forms.kindLabel(it.kind)), txt(it.description),
+          txt(it.currency || 'EUR'),
+          { v: U.round2(it.amount), t: 'n', z: '#,##0.00' },
+          rate(it.rate || 1), money(it.amountEur),
+        ];
+        if (!L.hidesReceipts) row.push(txt(receiptFlag(it.receiptId)));
+        if (L.namesTheCompany) row.push(txt(e.company));
+        body.push(row);
+      });
+    });
+
+    const total = new Array(head.length).fill('');
+    const euroAt = head.indexOf('Amount €');
+    total[euroAt - 1] = txt('TOTAL');
+    total[euroAt] = money(sum);
+    body.push(total);
+    return sheet(head, body, widths, { totalRow: true });
   }
 
   function summarySheet(rows, meta) {
@@ -178,10 +232,10 @@
     const labels = { mileage: 'Mileage', other: 'Other expenses', meeting: 'Meetings / entertainment', travel: 'Travel' };
     const aoa = [
       [{ v: 'EXPENSE CLAIM', t: 's' }, '', '', ''],
-      [txt('Claimed by'), txt(window.Store.settings.name), '', ''],
+      [txt('Prepared by'), txt(window.Store.settings.name), '', ''],
       [txt('Company'), txt(meta.company), '', ''],
       [txt('Period'), txt(meta.label), '', ''],
-      [txt('Prepared'), date(U.today()), '', ''],
+      [txt('Prepared on'), date(U.today()), '', ''],
       ['', '', '', ''],
       [txt('Category'), txt('Entries'), txt('Kilometres'), txt('Amount')],
     ];
@@ -206,15 +260,15 @@
         if (r === 0) {
           ws[addr].s = {
             font: { bold: true, sz: 15, color: { rgb: 'FFFFFF' } },
-            fill: { patternType: 'solid', fgColor: { rgb: TITLE_FILL } },
+            fill: { patternType: 'solid', fgColor: { rgb: ACCENT.title } },
             alignment: { vertical: 'center' },
           };
         } else if (r === 6) {
-          ws[addr].s = HEAD_STYLE;
+          ws[addr].s = headStyle();
         } else if (r === aoa.length - 1) {
-          ws[addr].s = TOTAL_STYLE;
+          ws[addr].s = totalStyle();
         } else if (c === 0 && r < 5) {
-          ws[addr].s = { font: { bold: true, color: { rgb: '6D28D9' } } };
+          ws[addr].s = { font: { bold: true, color: { rgb: ACCENT.label } } };
         }
       });
     });
@@ -240,6 +294,8 @@
     await Excel.loadLibrary();
     const XLSX = window.XLSX;
     const wb = XLSX.utils.book_new();
+    const L = layoutFor(meta);
+    ACCENT = L.hidesReceipts ? ACCENTS.epson : ACCENTS.violet;
 
     XLSX.utils.book_append_sheet(wb, summarySheet(rows, meta), 'Summary');
 
@@ -248,16 +304,10 @@
     const meetings = rows.filter((e) => e.type === 'meeting');
     const travel = rows.filter((e) => e.type === 'travel');
 
-    if (mileage.length) XLSX.utils.book_append_sheet(wb, mileageSheet(mileage), 'Mileage');
-    if (other.length) XLSX.utils.book_append_sheet(wb, otherSheet(other), 'Other expenses');
-    if (meetings.length) {
-      XLSX.utils.book_append_sheet(wb, meetingSheet(meetings), 'Meetings');
-      XLSX.utils.book_append_sheet(wb, meetingItemsSheet(meetings), 'Meeting costs');
-    }
-    if (travel.length) {
-      XLSX.utils.book_append_sheet(wb, travelSheet(travel), 'Travel');
-      XLSX.utils.book_append_sheet(wb, travelItemsSheet(travel), 'Travel costs');
-    }
+    if (mileage.length) XLSX.utils.book_append_sheet(wb, mileageSheet(mileage, L), 'Mileage');
+    if (other.length) XLSX.utils.book_append_sheet(wb, otherSheet(other, L), 'Other expenses');
+    if (meetings.length) XLSX.utils.book_append_sheet(wb, meetingSheet(meetings, L), 'Meetings');
+    if (travel.length) XLSX.utils.book_append_sheet(wb, travelSheet(travel, L), 'Travel');
 
     const out = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
     Excel.download(new Blob([out], {
