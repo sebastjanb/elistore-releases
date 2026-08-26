@@ -664,6 +664,24 @@
       '</div>' +
 
       '<div class="card" style="margin-top:14px">' +
+        '<div class="card-head"><div class="card-title">Sync with the Mac</div></div>' +
+        '<div class="form-grid">' +
+          '<div class="field"><label>Mac address</label>' +
+            '<input class="input" data-s="syncHost" placeholder="192.168.1.20:5758" value="' +
+              U.attr(s.syncHost || '') + '">' +
+            '<div class="field-hint">The Mac\'s address on your network, with :5758. It must be awake with Expenses open.</div></div>' +
+          '<div class="field"><label>Pairing code</label>' +
+            '<input class="input" data-s="syncCode" inputmode="numeric" placeholder="000000" value="' +
+              U.attr(s.syncCode || '') + '">' +
+            '<div class="field-hint">The same six digits the Mac has under Settings &rsaquo; Sync.</div></div>' +
+        '</div>' +
+        '<div class="divider"></div>' +
+        '<button class="btn btn-primary" data-act="sync">' + I.swap + '<span>Sync now</span></button>' +
+        '<div class="small muted" data-sync-status style="margin-top:8px">' +
+          'Newest wins, per entry. Nothing is deleted by a sync.</div>' +
+      '</div>' +
+
+      '<div class="card" style="margin-top:14px">' +
         '<div class="card-head"><div class="card-title">Storage</div></div>' +
         '<div class="small muted" data-usage>Counting…</div>' +
         '<div class="divider"></div>' +
@@ -702,6 +720,29 @@
         });
 
         root.addEventListener('click', async (ev) => {
+          const syncBtn = ev.target.closest('[data-act=sync]');
+          if (syncBtn) {
+            const status = U.$('[data-sync-status]', root);
+            syncBtn.disabled = true;
+            status.textContent = 'Talking to the Mac…';
+            try {
+              const r = await window.Sync.run();
+              const parts = [];
+              if (r.added) parts.push(r.added + ' new');
+              if (r.updated) parts.push(r.updated + ' updated');
+              status.textContent = parts.length
+                ? 'Synced — ' + parts.join(', ') + '.'
+                : 'Synced — already up to date.';
+              U.toast('Synced with the Mac');
+              app.refresh();
+            } catch (e) {
+              status.textContent = e.message;
+              U.toast(e.message, 'err');
+            } finally {
+              syncBtn.disabled = false;
+            }
+            return;
+          }
           if (!ev.target.closest('[data-act=wipe]')) return;
           const ok = await C.confirm(
             'This deletes every entry, recorded drive and receipt photo on this device. Export a backup first if you might need them.',

@@ -4,7 +4,7 @@
    it must be allowed to fail so the app can fall back to its own estimate. */
 // Bump this whenever anything in PRECACHE changes, or an already
 // installed copy keeps serving the old files forever.
-const VERSION = 'v3';
+const VERSION = 'v5';
 const SHELL = 'shell-' + VERSION;
 const RUNTIME = 'runtime-' + VERSION;
 
@@ -23,6 +23,7 @@ const PRECACHE = [
   'js/components.js',
   'js/forms.js',
   'js/views.js',
+  'js/sync.js',
   'js/excel.js',
   'js/app.js',
   'manifest.webmanifest',

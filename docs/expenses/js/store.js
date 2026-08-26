@@ -26,6 +26,9 @@
     ocrLang: 'eng',
     autoRouteLookup: true,
     gpsRoadFactor: 1.0,
+    /* Where the Mac is on the network, and the pairing code it expects. */
+    syncHost: '',
+    syncCode: '',
   };
 
   /* ── Open ──────────────────────────────────────────────────────── */
@@ -122,6 +125,31 @@
     if (Store.useFallback) lsWrite();
     else await wrap(tx('entries', 'readwrite').put(entry));
     return entry;
+  };
+
+  /* Saves without restamping updatedAt.
+     `saveEntry` marks every write with the current time, which is right for an
+     edit and wrong for a sync: an entry accepted from the other device would
+     immediately look newer than the copy it came from, and the next sync would
+     push it straight back — forever, with the other device's edits always
+     losing. Syncing writes the timestamp it was given. */
+  Store.saveEntrySynced = async function (entry) {
+    if (!entry.id) entry.id = window.U.uid();
+    if (!entry.createdAt) entry.createdAt = entry.updatedAt || Date.now();
+    const i = Store.entries.findIndex((e) => e.id === entry.id);
+    if (i > -1) Store.entries[i] = entry; else Store.entries.push(entry);
+    if (Store.useFallback) lsWrite();
+    else await wrap(tx('entries', 'readwrite').put(entry));
+    return entry;
+  };
+
+  Store.saveTripSynced = async function (trip) {
+    if (!trip.id) trip.id = window.U.uid();
+    const i = Store.trips.findIndex((t) => t.id === trip.id);
+    if (i > -1) Store.trips[i] = trip; else Store.trips.push(trip);
+    if (Store.useFallback) lsWrite();
+    else await wrap(tx('trips', 'readwrite').put(trip));
+    return trip;
   };
 
   Store.deleteEntry = async function (id) {
