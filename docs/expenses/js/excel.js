@@ -356,7 +356,14 @@
   };
 
   Excel.filename = function (meta, ext) {
-    const safe = (s) => String(s).replace(/[^\wÀ-ſ -]/g, '').replace(/\s+/g, '-');
+    // Same rule as the Mac app's ExportService.filename, so a claim exported
+    // from the car and one exported from the Mac land under the same name:
+    // strip, then collapse whatever gaps the strip left rather than turning
+    // each one into its own dash.
+    const safe = (s) => String(s)
+      .replace(/[^\wÀ-ſ -]/g, '')
+      .replace(/[ -]+/g, '-')
+      .replace(/^-+|-+$/g, '');
     return 'Expenses_' + safe(meta.company) + '_' + safe(meta.label) + '.' + ext;
   };
 
