@@ -136,16 +136,17 @@
     return sheet(head, body, widths, { totalRow: true });
   }
 
-  function otherSheet(rows, L) {
+  function otherSheet(rows, L, N) {
+    N = N || {};
     const head = ['Date', 'Category', 'Description', 'Amount'];
     const widths = [12, 22, 38, 14];
-    if (!L.hidesReceipts) { head.push('Receipt'); widths.push(10); }
+    if (!L.hidesReceipts) { head.push('Receipt'); widths.push(46); }
     if (L.namesTheCompany) { head.push('Claimed for'); widths.push(13); }
 
     const body = rows.map((e) => {
       const row = [date(e.date), txt(window.Forms.kindLabel(e.category)),
         txt(e.description), money(e.total)];
-      if (!L.hidesReceipts) row.push(txt(receiptFlag(e.receiptId)));
+      if (!L.hidesReceipts) row.push(txt(N[e.id] || receiptFlag(e.receiptId)));
       if (L.namesTheCompany) row.push(txt(e.company));
       return row;
     });
@@ -161,11 +162,12 @@
   /* Meetings and their costs on one sheet: a row per cost line carrying the
      meeting it belongs to. Two sheets meant cross-referencing by date to
      answer "what was this dinner for". */
-  function meetingSheet(rows, L) {
+  function meetingSheet(rows, L, N) {
+    N = N || {};
     const head = ['Date', 'Location', 'Company', 'What it was about', 'Type',
       'Currency', 'Amount', 'Rate to €', 'Amount €'];
     const widths = [12, 20, 26, 30, 20, 10, 14, 11, 14];
-    if (!L.hidesReceipts) { head.push('Receipt'); widths.push(10); }
+    if (!L.hidesReceipts) { head.push('Receipt'); widths.push(46); }
     if (L.namesTheCompany) { head.push('Claimed for'); widths.push(13); }
 
     const body = [];
@@ -179,7 +181,7 @@
           { v: U.round2(it.amount), t: 'n', z: '#,##0.00' },
           rate(it.rate || 1), money(it.amountEur),
         ];
-        if (!L.hidesReceipts) row.push(txt(receiptFlag(it.receiptId)));
+        if (!L.hidesReceipts) row.push(txt(N[it.id] || receiptFlag(it.receiptId)));
         if (L.namesTheCompany) row.push(txt(e.company));
         body.push(row);
       });
@@ -193,11 +195,12 @@
     return sheet(head, body, widths, { totalRow: true });
   }
 
-  function travelSheet(rows, L) {
+  function travelSheet(rows, L, N) {
+    N = N || {};
     const head = ['Date', 'Country', 'City', 'Purpose', 'Type', 'Description',
       'Currency', 'Amount', 'Rate to €', 'Amount €'];
     const widths = [12, 20, 20, 28, 20, 32, 10, 14, 11, 14];
-    if (!L.hidesReceipts) { head.push('Receipt'); widths.push(10); }
+    if (!L.hidesReceipts) { head.push('Receipt'); widths.push(46); }
     if (L.namesTheCompany) { head.push('Claimed for'); widths.push(13); }
 
     const body = [];
@@ -212,7 +215,7 @@
           { v: U.round2(it.amount), t: 'n', z: '#,##0.00' },
           rate(it.rate || 1), money(it.amountEur),
         ];
-        if (!L.hidesReceipts) row.push(txt(receiptFlag(it.receiptId)));
+        if (!L.hidesReceipts) row.push(txt(N[it.id] || receiptFlag(it.receiptId)));
         if (L.namesTheCompany) row.push(txt(e.company));
         body.push(row);
       });
@@ -290,9 +293,12 @@
     });
   };
 
-  Excel.workbook = async function (rows, meta) {
+  /* The bytes, without delivering them — so the same workbook can go into a
+     zip beside the receipt scans instead of straight to the browser. */
+  Excel.workbookBytes = async function (rows, meta, receiptNames) {
     await Excel.loadLibrary();
     const XLSX = window.XLSX;
+    const N = receiptNames || {};
     const wb = XLSX.utils.book_new();
     const L = layoutFor(meta);
     ACCENT = L.hidesReceipts ? ACCENTS.epson : ACCENTS.violet;
@@ -305,12 +311,16 @@
     const travel = rows.filter((e) => e.type === 'travel');
 
     if (mileage.length) XLSX.utils.book_append_sheet(wb, mileageSheet(mileage, L), 'Mileage');
-    if (other.length) XLSX.utils.book_append_sheet(wb, otherSheet(other, L), 'Other expenses');
-    if (meetings.length) XLSX.utils.book_append_sheet(wb, meetingSheet(meetings, L), 'Meetings');
-    if (travel.length) XLSX.utils.book_append_sheet(wb, travelSheet(travel, L), 'Travel');
+    if (other.length) XLSX.utils.book_append_sheet(wb, otherSheet(other, L, N), 'Other expenses');
+    if (meetings.length) XLSX.utils.book_append_sheet(wb, meetingSheet(meetings, L, N), 'Meetings');
+    if (travel.length) XLSX.utils.book_append_sheet(wb, travelSheet(travel, L, N), 'Travel');
 
-    const out = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    Excel.download(new Blob([out], {
+    return new Uint8Array(XLSX.write(wb, { bookType: 'xlsx', type: 'array' }));
+  };
+
+  Excel.workbook = async function (rows, meta) {
+    const bytes = await Excel.workbookBytes(rows, meta);
+    Excel.download(new Blob([bytes], {
       type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     }), Excel.filename(meta, 'xlsx'));
   };

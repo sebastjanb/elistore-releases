@@ -494,6 +494,13 @@
             '<span>Otherwise only ' + U.esc(company) + ' is exported</span></div>' +
         '</div>' +
 
+        '<div class="switch-row" style="margin-top:10px">' +
+          '<div class="sw"><input type="checkbox" data-f="includeReceipts"' +
+            (state.includeReceipts ? ' checked' : '') + '><i></i></div>' +
+          '<div class="sw-text"><b>Include the scanned receipts</b>' +
+            '<span data-receipts>Counting the scans…</span></div>' +
+        '</div>' +
+
         '<div class="divider"></div>' +
         '<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">' +
           '<button class="btn btn-primary" data-act="xlsx">' + I.download + '<span>Export Excel</span></button>' +
@@ -544,12 +551,39 @@
           const rows = selection();
           preview.textContent = rows.length + (rows.length === 1 ? ' entry · ' : ' entries · ') +
             U.eur(U.sum(rows, (e) => e.total));
+          paintReceiptCount(rows);
+        }
+
+        /* Counting means reading every stored photo, so it runs when the
+           selection changes rather than on every repaint, and a later count
+           never overwrites the caption of a newer one. */
+        let countToken = 0;
+        async function paintReceiptCount(rows) {
+          const label = U.$('[data-receipts]', root);
+          if (!label) return;
+          const mine = ++countToken;
+          const files = await window.Receipts.collect(rows).catch(() => []);
+          if (mine !== countToken) return;
+          if (!files.length) {
+            label.textContent = 'No scanned receipts in this selection';
+            return;
+          }
+          let bytes = 0;
+          for (const f of files) bytes += f.bytes.length;
+          const mb = bytes / 1048576;
+          const size = mb < 1 ? Math.max(1, Math.round(bytes / 1024)) + ' KB'
+                              : mb.toFixed(0) + ' MB';
+          label.textContent = files.length + (files.length === 1 ? ' photo, ' : ' photos, ')
+            + 'about ' + size + ', packed with the workbook in a .zip'
+            + (mb > 20 ? ' — too large to email, share a link instead' : '');
         }
 
         root.addEventListener('change', (ev) => {
           const f = ev.target.dataset.f;
           if (!f) return;
-          state[f] = f === 'bothCompanies' ? ev.target.checked : ev.target.value;
+          // Every checkbox is a boolean, not just the first one that existed:
+          // reading .value here would store the string "on".
+          state[f] = ev.target.type === 'checkbox' ? ev.target.checked : ev.target.value;
           paint();
         });
         root.addEventListener('input', (ev) => {
@@ -585,8 +619,23 @@
           if (act.dataset.act === 'xlsx') {
             try {
               act.disabled = true;
-              await window.Excel.workbook(rows, meta);
-              U.toast('Excel file created');
+              // Both conditions, deliberately. The toggle can be left on after
+              // switching to a period with no scans, and a zip holding an empty
+              // receipts folder is indistinguishable from lost scans at the
+              // other end.
+              const wantsReceipts = state.includeReceipts !== false && state.includeReceipts;
+              const packed = wantsReceipts
+                ? await window.Receipts.archive(rows, meta)
+                : null;
+              if (packed) {
+                window.Excel.download(packed.blob, window.Excel.filename(meta, 'zip'));
+                U.toast('Excel file and ' + packed.count
+                  + (packed.count === 1 ? ' scan' : ' scans') + ' packed');
+              } else {
+                await window.Excel.workbook(rows, meta);
+                U.toast(wantsReceipts ? 'Excel file created — no scans to include'
+                                      : 'Excel file created');
+              }
             } catch (e) {
               console.error(e);
               U.toast(e.message || 'Export failed', 'err');
