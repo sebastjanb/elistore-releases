@@ -713,16 +713,19 @@
       '</div>' +
 
       '<div class="card" style="margin-top:14px">' +
-        '<div class="card-head"><div class="card-title">Sync with the Mac</div></div>' +
+        '<div class="card-head"><div class="card-title">Sync</div></div>' +
         '<div class="form-grid">' +
           '<div class="field"><label>Mac address</label>' +
             '<input class="input" data-s="syncHost" placeholder="192.168.1.20:5758" value="' +
               U.attr(s.syncHost || '') + '">' +
-            '<div class="field-hint">The Mac\'s address on your network, with :5758. It must be awake with Expenses open.</div></div>' +
+            '<div class="field-hint">' + (window.Sync && window.Sync.inCarApp()
+              ? 'The iPhone\'s address, with :5758 — Expenses shows it under Settings &rsaquo; Sync. It answers only while that app is open in front.'
+              : 'The Mac\'s address on your network, with :5758. It must be awake with Expenses open.')
+              + '</div></div>' +
           '<div class="field"><label>Pairing code</label>' +
             '<input class="input" data-s="syncCode" inputmode="numeric" placeholder="000000" value="' +
               U.attr(s.syncCode || '') + '">' +
-            '<div class="field-hint">The same six digits the Mac has under Settings &rsaquo; Sync.</div></div>' +
+            '<div class="field-hint">The same six digits the other device has under Settings &rsaquo; Sync.</div></div>' +
         '</div>' +
         '<div class="divider"></div>' +
         '<button class="btn btn-primary" data-act="sync">' + I.swap + '<span>Sync now</span></button>' +

@@ -17,13 +17,27 @@
   /* The Mac writes updatedAt in seconds; this app keeps milliseconds. Getting
      this wrong makes every "which is newer" comparison out by a factor of a
      thousand, so one side always wins and the other's edits vanish. */
-  const toSeconds = (v) => (!v ? 0 : (v > 1e12 ? Math.round(v / 1000) : v));
+  /* Never round here. Rounding to whole seconds sends half of all entries
+     back a fraction newer than they really are — the other device then accepts
+     them, returns them newer still, and that one entry bounces between the two
+     forever. Seconds are stored as a real number on both sides, so the
+     fraction costs nothing and the round trip is exact. */
+  const toSeconds = (v) => (!v ? 0 : (v > 1e12 ? v / 1000 : v));
   const toMillis = (v) => (!v ? 0 : (v > 1e12 ? v : v * 1000));
+
+  /* Inside the car app the page is served by Android's asset loader, and a
+     native app is not bound by the browser's mixed-content rule — so a bare
+     address there means plain http, which is what the phone offers. In a
+     browser it must mean https, or the request never leaves the page. */
+  const insideTheCarApp = () => location.hostname === 'appassets.androidplatform.net';
+
+  Sync.inCarApp = insideTheCarApp;
 
   Sync.address = function () {
     const raw = (window.Store.settings.syncHost || '').trim();
     if (!raw) return '';
-    const withScheme = /^https?:\/\//i.test(raw) ? raw : 'https://' + raw;
+    const scheme = insideTheCarApp() ? 'http://' : 'https://';
+    const withScheme = /^https?:\/\//i.test(raw) ? raw : scheme + raw;
     return withScheme.replace(/\/+$/, '');
   };
 
@@ -54,8 +68,11 @@
         body: JSON.stringify(payload),
       });
     } catch (e) {
-      throw new Error('Could not reach the Mac. Check it is awake, on the same '
-        + 'network, has Expenses open, and that the certificate is installed here.');
+      throw new Error(insideTheCarApp()
+        ? 'Could not reach the phone. Check it is on the same network with '
+          + 'Expenses open in front — iOS stops answering the moment you leave the app.'
+        : 'Could not reach the Mac. Check it is awake, on the same network, has '
+          + 'Expenses open, and that the certificate is installed here.');
     }
 
     if (res.status === 401) throw new Error('The pairing code did not match');

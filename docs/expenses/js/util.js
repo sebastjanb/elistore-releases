@@ -8,8 +8,22 @@
   U.$ = (sel, root) => (root || document).querySelector(sel);
   U.$$ = (sel, root) => Array.prototype.slice.call((root || document).querySelectorAll(sel));
 
+  /* A real UUID, because the Mac and the phone parse every id with
+     UUID(uuidString:) and silently skip the row when that fails — no error,
+     no warning, just an entry that never arrives. The old short id was fine
+     while this app only talked to itself. */
   U.uid = function () {
-    return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID().toUpperCase();
+    // Older WebViews have getRandomValues but not randomUUID.
+    const b = new Uint8Array(16);
+    (window.crypto || {}).getRandomValues
+      ? crypto.getRandomValues(b)
+      : b.forEach((_, i) => { b[i] = Math.floor(Math.random() * 256); });
+    b[6] = (b[6] & 0x0f) | 0x40;
+    b[8] = (b[8] & 0x3f) | 0x80;
+    const h = [...b].map((x) => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+    return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16)
+      + '-' + h.slice(16, 20) + '-' + h.slice(20);
   };
 
   /* HTML escaping. Every piece of user text goes through this before it is

@@ -4,7 +4,7 @@
    it must be allowed to fail so the app can fall back to its own estimate. */
 // Bump this whenever anything in PRECACHE changes, or an already
 // installed copy keeps serving the old files forever.
-const VERSION = 'v8';
+const VERSION = 'v11';
 const SHELL = 'shell-' + VERSION;
 const RUNTIME = 'runtime-' + VERSION;
 
