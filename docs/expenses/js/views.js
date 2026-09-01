@@ -715,7 +715,8 @@
       '<div class="card" style="margin-top:14px">' +
         '<div class="card-head"><div class="card-title">Sync</div></div>' +
         '<div class="form-grid">' +
-          '<div class="field"><label>Mac address</label>' +
+          '<div class="field"><label>' + (window.Sync && window.Sync.inCarApp()
+              ? 'iPhone address' : 'Mac address') + '</label>' +
             '<input class="input" data-s="syncHost" placeholder="192.168.1.20:5758" value="' +
               U.attr(s.syncHost || '') + '">' +
             '<div class="field-hint">' + (window.Sync && window.Sync.inCarApp()
